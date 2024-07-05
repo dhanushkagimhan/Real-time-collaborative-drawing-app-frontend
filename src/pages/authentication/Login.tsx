@@ -1,4 +1,4 @@
-import { InputBox } from "../../utility/components";
+import { Button, InputBox } from "../../utility/components";
 
 export default function Login() {
   return (
@@ -8,6 +8,7 @@ export default function Login() {
         <form>
           <InputBox title="Email" name="email" type="email" />
           <InputBox title="Password" name="password" type="password" />
+          <Button title="Login" />
         </form>
       </div>
     </div>
