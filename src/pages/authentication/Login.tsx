@@ -18,7 +18,7 @@ export default function Login() {
     password: "",
   });
 
-  const [submitBtnDisabled, setSubmitBtnDisabled] = useState<boolean>(false);
+  const [submitBtnDisabled, setSubmitBtnDisabled] = useState<boolean>(true);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name: string = e.target.name;
@@ -28,9 +28,25 @@ export default function Login() {
 
     let submitBtnDisableLocal: boolean = false;
 
+    if (name === "email") {
+      if (
+        value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/) == null
+      ) {
+        setFormErrors((values) => ({
+          ...values,
+          [name]: "Please add valid email address",
+        }));
+        submitBtnDisableLocal = true;
+      } else {
+        setFormErrors((values) => ({
+          ...values,
+          [name]: "",
+        }));
+      }
+    }
+
     if (name === "password") {
       if (value.length < 8) {
-        setSubmitBtnDisabled(true);
         setFormErrors((values) => ({
           ...values,
           [name]: "Password length must have more than 8 characters",
@@ -42,6 +58,10 @@ export default function Login() {
           [name]: "",
         }));
       }
+    }
+
+    if (formValues.email === "" || formValues.password === "") {
+      submitBtnDisableLocal = true;
     }
 
     setSubmitBtnDisabled(submitBtnDisableLocal);
@@ -64,6 +84,7 @@ export default function Login() {
             handleChange={handleChange}
             value={formValues.email}
             type="email"
+            error={formErrors.email}
             required={true}
           />
           <InputBox
