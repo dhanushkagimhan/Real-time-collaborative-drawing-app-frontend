@@ -5,7 +5,7 @@ export default function Login() {
     <div className="p-10 border-slate-400 border-2 rounded">
       <h2 className="text-2xl font-semibold">Login</h2>
       <div className="mt-10">
-        <form>
+        <form className="w-[300px]">
           <InputBox title="Email" name="email" type="email" />
           <InputBox title="Password" name="password" type="password" />
           <Button title="Login" />
