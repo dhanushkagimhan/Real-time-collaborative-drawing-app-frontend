@@ -1,24 +1,28 @@
 import { Link } from "react-router-dom";
 import { Button, InputBox } from "../../utility/components";
 import { ChangeEvent, FormEvent, useState } from "react";
-
-type FormValueType = {
-  email: string;
-  password: string;
-};
+import { UserLoginType } from "../../utility/types";
+import { useUserLogin } from "../../services";
+import { useUserStore } from "../../states";
+import { useCookies } from "react-cookie";
+import dayjs from "dayjs";
 
 export default function Login() {
-  const [formValues, setFormValues] = useState<FormValueType>({
+  const [formValues, setFormValues] = useState<UserLoginType>({
     email: "",
     password: "",
   });
 
-  const [formErrors, setFormErrors] = useState<FormValueType>({
+  const [formErrors, setFormErrors] = useState<UserLoginType>({
     email: "",
     password: "",
   });
 
   const [submitBtnDisabled, setSubmitBtnDisabled] = useState<boolean>(true);
+
+  const userLoginMutation = useUserLogin();
+  const userState = useUserStore();
+  const [_, setCookie] = useCookies(["adminJwt"]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name: string = e.target.name;
@@ -71,6 +75,20 @@ export default function Login() {
     e.preventDefault();
 
     console.log(formValues);
+
+    userLoginMutation.mutate(formValues, {
+      onSuccess: (data) => {
+        if (data.data.success) {
+          console.log(data.data.data);
+          userState.setUser(data.data.data);
+          const accessToken: string = data.data.data.token;
+          setCookie("adminJwt", accessToken, {
+            expires: dayjs().add(1, "h").toDate(),
+          });
+          console.log("Log in");
+        }
+      },
+    });
   };
 
   return (
