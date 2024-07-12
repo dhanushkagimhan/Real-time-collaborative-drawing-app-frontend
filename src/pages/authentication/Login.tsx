@@ -6,6 +6,7 @@ import { useUserLogin } from "../../services";
 import { useUserStore } from "../../states";
 import { useCookies } from "react-cookie";
 import dayjs from "dayjs";
+import { getMutationError } from "../../utility/methods";
 
 export default function Login() {
   const [formValues, setFormValues] = useState<UserLoginType>({
@@ -95,6 +96,13 @@ export default function Login() {
     <div className="p-10 border-slate-400 border-2 rounded">
       <h2 className="text-2xl font-semibold">Login</h2>
       <div className="mt-10">
+        {userLoginMutation.isError ? (
+          <div className="p-2 w-full bg-red-100 rounded">
+            {getMutationError(userLoginMutation)}
+          </div>
+        ) : (
+          <></>
+        )}
         <form className="w-[300px]" onSubmit={formSubmit}>
           <InputBox
             title="Email"
