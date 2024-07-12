@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, InputBox } from "../../utility/components";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { UserLoginType } from "../../utility/types";
@@ -23,7 +23,8 @@ export default function Login() {
 
   const userLoginMutation = useUserLogin();
   const userState = useUserStore();
-  const [_, setCookie] = useCookies(["adminJwt"]);
+  const [_, setCookie] = useCookies(["userJWT"]);
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name: string = e.target.name;
@@ -80,10 +81,10 @@ export default function Login() {
         if (data.data.success) {
           userState.setUser(data.data.data);
           const accessToken: string = data.data.data.token;
-          setCookie("adminJwt", accessToken, {
+          setCookie("userJWT", accessToken, {
             expires: dayjs().add(1, "h").toDate(),
           });
-          console.log("Log in");
+          navigate("/main-board");
         }
       },
     });

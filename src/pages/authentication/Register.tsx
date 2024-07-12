@@ -6,6 +6,7 @@ import { useUserRegister } from "../../services/authentication/authentication";
 import dayjs from "dayjs";
 import { getMutationError } from "../../utility/methods";
 import { UserRegisterType } from "../../utility/types";
+import { useNavigate } from "react-router-dom";
 
 type FormValueType = {
   firstName: string;
@@ -36,7 +37,8 @@ export default function Register() {
 
   const userRegisterMutation = useUserRegister();
   const userState = useUserStore();
-  const [_, setCookie] = useCookies(["adminJwt"]);
+  const [_, setCookie] = useCookies(["userJWT"]);
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name: string = e.target.name;
@@ -121,10 +123,10 @@ export default function Register() {
         if (data.data.success) {
           userState.setUser(data.data.data);
           const accessToken: string = data.data.data.token;
-          setCookie("adminJwt", accessToken, {
+          setCookie("userJWT", accessToken, {
             expires: dayjs().add(1, "h").toDate(),
           });
-          console.log("Registered new user!");
+          navigate("/main-board");
         }
       },
     });
