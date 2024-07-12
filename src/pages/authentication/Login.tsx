@@ -75,12 +75,9 @@ export default function Login() {
   const formSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    console.log(formValues);
-
     userLoginMutation.mutate(formValues, {
       onSuccess: (data) => {
         if (data.data.success) {
-          console.log(data.data.data);
           userState.setUser(data.data.data);
           const accessToken: string = data.data.data.token;
           setCookie("adminJwt", accessToken, {

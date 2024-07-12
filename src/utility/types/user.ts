@@ -3,4 +3,11 @@ type UserLoginType = {
   password: string;
 };
 
-export type { UserLoginType };
+type UserRegisterType = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type { UserLoginType, UserRegisterType };

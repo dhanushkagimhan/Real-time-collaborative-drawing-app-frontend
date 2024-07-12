@@ -1,3 +1,3 @@
-import { UserLoginType } from "./user";
+import { UserLoginType, UserRegisterType } from "./user";
 
-export type { UserLoginType };
+export type { UserLoginType, UserRegisterType };

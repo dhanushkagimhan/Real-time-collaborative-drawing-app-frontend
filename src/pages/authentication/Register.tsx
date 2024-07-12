@@ -1,5 +1,11 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Button, InputBox } from "../../utility/components";
+import { useCookies } from "react-cookie";
+import { useUserStore } from "../../states";
+import { useUserRegister } from "../../services/authentication/authentication";
+import dayjs from "dayjs";
+import { getMutationError } from "../../utility/methods";
+import { UserRegisterType } from "../../utility/types";
 
 type FormValueType = {
   firstName: string;
@@ -27,6 +33,10 @@ export default function Register() {
   });
 
   const [submitBtnDisabled, setSubmitBtnDisabled] = useState<boolean>(true);
+
+  const userRegisterMutation = useUserRegister();
+  const userState = useUserStore();
+  const [_, setCookie] = useCookies(["adminJwt"]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name: string = e.target.name;
@@ -99,13 +109,39 @@ export default function Register() {
   const formSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    console.log(formValues);
+    const newUser: UserRegisterType = {
+      email: formValues.email,
+      password: formValues.password,
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+    };
+
+    userRegisterMutation.mutate(newUser, {
+      onSuccess: (data) => {
+        if (data.data.success) {
+          userState.setUser(data.data.data);
+          const accessToken: string = data.data.data.token;
+          setCookie("adminJwt", accessToken, {
+            expires: dayjs().add(1, "h").toDate(),
+          });
+          console.log("Registered new user!");
+        }
+      },
+    });
   };
 
   return (
     <div className="flex flex-row justify-center">
       <div className="p-10 border-slate-400 border-2 rounded">
         <h2 className="text-2xl font-semibold">Register</h2>
+
+        {userRegisterMutation.isError ? (
+          <div className="mt-2 p-2 w-full bg-red-100 rounded">
+            {getMutationError(userRegisterMutation)}
+          </div>
+        ) : (
+          <></>
+        )}
 
         <form className="w-[300px]" onSubmit={formSubmit}>
           <InputBox
